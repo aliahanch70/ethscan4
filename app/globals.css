@@ -226,3 +226,18 @@ span.flatpickr-weekday,
     --ring: 142.4 71.8% 29.2%;
   }
 }
+
+.price {
+  transition: color 0.5s ease, transform 0.5s ease;
+}
+
+.price-up {
+  color: #10b981; /* رنگ سبز */
+  transform: scale(1.1); /* کمی بزرگتر */
+}
+
+.price-down {
+  color: #ef4444; /* رنگ قرمز */
+  transform: scale(0.9); /* کمی کوچکتر */
+}
+

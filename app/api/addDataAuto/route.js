@@ -8,7 +8,7 @@ export async function POST(request) {
     const client = await clientPromise;
     const db = client.db('ali');
     
-    const result = await db.collection('coll2').insertOne({ fgas, lgas , pgas ,date , time });
+    const result = await db.collection('coll').insertOne({ fgas, lgas , pgas ,date , time });
 
     return NextResponse.json(result);
   } catch (e) {
