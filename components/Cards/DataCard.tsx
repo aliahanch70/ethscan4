@@ -1,6 +1,7 @@
 import {
   BadgeDelta,
   Card,
+  CategoryBar,
   Flex,
   Metric,
   ProgressBar,
@@ -26,11 +27,12 @@ const DataCard = (props: Props) => {
           </div>
           <BadgeDelta deltaType="moderateIncrease">{edge}</BadgeDelta>
         </Flex>
-        <Flex className="mt-4">
-          <Text className="truncate">Low</Text>
-          <Text>High</Text>
-        </Flex>
-        <ProgressBar value={(amount/100)*100*3} className="mt-2" />
+        
+        <CategoryBar
+            values={[5, 5 , 10]}
+            colors={['emerald', 'yellow', 'rose']}
+            markerValue={amount}
+          />
       </Card>
     </div>
   );
