@@ -21,6 +21,7 @@ import {
   AlertCircle,
   SwissFranc,
   MousePointerClick,
+  Bitcoin,
 } from "lucide-react";
 import { useSidebar } from "./use-sidebar";
 import { cn } from "@/app/libs/utlis";
@@ -131,13 +132,7 @@ const Sidebar = ({}: SidebarProps) => {
               >
                 <li>
                   <LinkItem
-                    icon={<Image
-                      className="h-6 w-6 rounded-md"
-                      width={40}
-                      height={40}
-                      src={"/images/black/eth.png"}
-                      alt="Logo"
-                    />}
+                    icon={<Bitcoin className="h-6 w-6"/>}
                     title="ETH Gas Fee"
                     href="/"
                     onClick={handleLinkClick}
@@ -146,18 +141,9 @@ const Sidebar = ({}: SidebarProps) => {
 
                 <li>
                   <LinkItem
-                    title="Calendar"
-                    href="/calendar"
+                    title="Crypto Price"
+                    href="/price"
                     icon={<Calendar className="h-6 w-6" />}
-                    onClick={handleLinkClick}
-                  ></LinkItem>
-                </li>
-
-                <li>
-                  <LinkItem
-                    title="Tables"
-                    href="/tables"
-                    icon={<Table2Icon className="h-6 w-6" />}
                     onClick={handleLinkClick}
                   ></LinkItem>
                 </li>
@@ -180,48 +166,11 @@ const Sidebar = ({}: SidebarProps) => {
                   ></LinkItem>
                 </li>
 
-                <li>
-                  <LinkItem
-                    title="Charts"
-                    href="/chart"
-                    icon={<BarChart2 className="h-6 w-6" />}
-                    onClick={handleLinkClick}
-                  ></LinkItem>
-                </li>
+                
 
-                <li>
-                  <ExpandMenu icon={<Component className="h-6 w-6" />} name="UI">
-                    <LinkItem
-                      title="Alerts"
-                      href="/ui/alerts"
-                      icon={<AlertCircle className="h-5 w-5" />}
-                      onClick={handleLinkClick}
-                    ></LinkItem>
-                    <LinkItem
-                      title="Buttons"
-                      href="/ui/buttons"
-                      icon={<MousePointerClick className="h-5 w-5" />}
-                      onClick={handleLinkClick}
-                    />
-                  </ExpandMenu>
-                </li>
+                
 
-                <li>
-                  <ExpandMenu name="Auth" icon={<LampIcon className="h-6 w-6" />}>
-                    <LinkItem
-                      title="Sign In"
-                      href="/auth/signin"
-                      icon={<LockIcon className="h-5 w-5" />}
-                      onClick={handleLinkClick}
-                    ></LinkItem>
-                    <LinkItem
-                      title="Sign up"
-                      href="/auth/signup"
-                      icon={<SignalHigh className="h-5 w-5" />}
-                      onClick={handleLinkClick}
-                    ></LinkItem>
-                  </ExpandMenu>
-                </li>
+                
               </ul>
             </div>
           </nav>

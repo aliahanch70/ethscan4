@@ -5,6 +5,7 @@ import TableOne from "../Tables/TableOne";
 import dynamic from "next/dynamic";
 import DataCard from "../Cards/DataCard";
 import axios from 'axios'; // Import Axios for making HTTP requests
+import Loading from '../Loading/Loading';
 
 // const sendToTelegram = async (message: any) => {
 //   try {
@@ -76,7 +77,7 @@ function ECommerce() {
   //   }
   // }, [data]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loading/>;
   if (!data) return <p>No profile data</p>;
 
   return (
@@ -93,15 +94,11 @@ function ECommerce() {
         <AreaChart />
         <SimpleBar />
       </div>
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <div className="col-span-12 xl:col-span-8">
-          <TableOne />
-        </div>
-        <ChatCard />
-      </div>
+      
     </>
   );
 }
 
 export default ECommerce;
+
 

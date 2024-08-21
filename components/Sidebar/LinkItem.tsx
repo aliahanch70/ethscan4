@@ -6,6 +6,7 @@ type Props = {
   icon?: React.ReactNode;
   title: string;
   href: string;
+  onClick:() => void;
 };
 
 const LinkItem = (props: Props) => {
