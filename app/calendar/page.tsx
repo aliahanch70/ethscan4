@@ -1,88 +1,56 @@
-'use client';
 
-import { useEffect, useState } from 'react';
-import { Card, SparkAreaChart } from '@tremor/react';
+import BtcChart from './BtcChart'; // Import Client Component
 
-export default function BtcPage() {
-  const [chartData, setChartData] = useState([]);
-  const [lastPrice, setLastPrice] = useState(null);
-  const [percentageChange, setPercentageChange] = useState(null);
-  const [priceClass, setPriceClass] = useState(''); // کلاس CSS برای انیمیشن
+async function getHistoricalData() {
+  const response = await fetch('https://api.mobula.io/api/1/market/history?asset=Bitcoin');
+  const result = await response.json();
+  return result.data.price_history;
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch historical BTC data from your API
-        const historyResponse = await fetch('/api/btc');
-        const historyResult = await historyResponse.json();
+async function getPriceChange() {
+  const response = await fetch('https://api.kraken.com/0/public/Ticker?pair=BTCUSD');
+  const result = await response.json();
+  return parseFloat(result.result.XXBTZUSD.c[0]);
+}
 
-        if (historyResult.result && historyResult.result.rows) {
-          const rows = historyResult.result.rows;
+async function getPriceChange24h() {
+  const response = await fetch('https://api.mobula.io/api/1/market/data?asset=Bitcoin');
+  const result = await response.json();
+  return result.data.price_change_24h;
+}
 
-          // Prepare chart data
-          const formattedData = rows.map((row) => ({
-            date: row.date_time.split(' ')[0], // Use date without time
-            price: row.unit_price,
-          }));
+export default async function Page() {
+  const [historicalData, priceChange24h, lastPrice] = await Promise.all([
+    getHistoricalData(),
+    getPriceChange24h(),
+    getPriceChange(),
+  ]);
 
-          // Calculate percentage change
-          const lastDayPrice = rows[0].unit_price;
-          const previousDayPrice = rows[1].unit_price;
-          const change = ((lastDayPrice - previousDayPrice) / previousDayPrice) * 100;
+  // Process and filter history data to include only the last 6 weeks
+  const currentTime = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+  const chartData = [];
 
-          setChartData(formattedData);
-          setPercentageChange(change.toFixed(2));
-        }
+  for (let i = 0; i < 6; i++) {
+    const weekStart = currentTime - (i + 1) * oneWeek;
+    const weekEnd = currentTime - i * oneWeek;
 
-        // Fetch the latest BTC price from Kraken API
-        const krakenResponse = await fetch('https://api.kraken.com/0/public/Ticker?pair=BTCUSD');
-        const krakenResult = await krakenResponse.json();
+    const weekPrices = historicalData.filter(
+      (item: [number, number]) => item[0] >= weekStart && item[0] < weekEnd
+    );
 
-        if (krakenResult.result && krakenResult.result.XXBTZUSD) {
-          const newLastPrice = parseFloat(krakenResult.result.XXBTZUSD.c[0]).toFixed(2);
-
-          // Apply animation class if the price has changed
-          if (lastPrice !== null && newLastPrice !== lastPrice) {
-            setPriceClass(newLastPrice > lastPrice ? 'price-up' : 'price-down');
-          }
-
-          setLastPrice(newLastPrice);
-
-          // Remove the animation class after 500ms
-          setTimeout(() => setPriceClass(''), 500);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    // Update every 5 seconds
-    const intervalId = setInterval(fetchData, 5000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+    if (weekPrices.length > 0) {
+      const lastPriceOfWeek = weekPrices[weekPrices.length - 1][1];
+      chartData.unshift({
+        date: new Date(weekEnd).toISOString().split('T')[0],
+        price: lastPriceOfWeek,
+      });
+    }
+  }
 
   return (
-    <Card className="mx-auto flex max-w-lg items-center justify-between px-4 py-3.5">
-      <div className="flex items-center space-x-2.5">
-        <p className="text-tremor-content-strong dark:text-dark-tremor-content-strong font-medium">BTC</p>
-        <span className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Bitcoin</span>
-      </div>
-      <SparkAreaChart
-        data={chartData}
-        categories={['price']}
-        index={'date'}
-        colors={['emerald']}
-        className="h-8 w-20 sm:h-10 sm:w-36"
-      />
-      <div className="flex items-center space-x-2.5">
-        <span className={`font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong ${priceClass}`}>
-          ${lastPrice}
-        </span>
-        <span className={`rounded px-2 py-1 text-tremor-default font-medium text-white ${percentageChange >= 0 ? 'bg-emerald-500' : 'bg-red-500'}`}>
-          {percentageChange >= 0 ? '+' : ''}{percentageChange}%
-        </span>
-      </div>
-    </Card>
+    <div>
+      <BtcChart chartData={chartData} lastPrice={lastPrice} priceChange24h={priceChange24h} />
+    </div>
   );
 }
